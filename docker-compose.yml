@@ -1,0 +1,49 @@
+version: '3'
+
+services:
+  nginx-proxy:
+    image: jwilder/nginx-proxy:alpine
+    container_name: nginx-proxy
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+      - ./nginx/vhost.d:/etc/nginx/vhost.d
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./nginx/html:/usr/share/nginx/html
+      - /etc/letsencrypt/live:/etc/letsencrypt/live:ro
+      - /etc/letsencrypt/archive:/etc/letsencrypt/archive:ro
+      - nginx_certs:/etc/nginx/certs:rw
+    environment:
+      - ENABLE_IPV6=true
+    restart: always
+    networks:
+      - app_network
+    healthcheck:
+      test: ["CMD-SHELL", "nginx -t && wget -q --spider http://localhost/ || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  letsencrypt-companion:
+    image: jrcs/letsencrypt-nginx-proxy-companion:latest
+    container_name: letsencrypt-companion
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - nginx_certs:/etc/nginx/certs:rw
+    environment:
+      - NGINX_PROXY_CONTAINER=nginx-proxy
+    restart: always
+    networks:
+      - app_network
+    depends_on:
+      - nginx-proxy
+
+volumes:
+  nginx_certs:
+
+networks:
+  app_network:
+    external: true
