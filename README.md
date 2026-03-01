@@ -2,6 +2,8 @@
 
 Single nginx-proxy + Let's Encrypt companion for multiple domains. Other projects run on the same host and join the `app_network` with `VIRTUAL_HOST` / `LETSENCRYPT_HOST` to get HTTPS.
 
+For a detailed guide (examples, custom nginx config, WebSockets, troubleshooting), see **[NGINX-PROXY-README.md](NGINX-PROXY-README.md)**.
+
 ## Architecture
 
 - **nginx-proxy**: one container on 80/443, routes by hostname to containers on `app_network`
