@@ -9,6 +9,10 @@ mkdir -p nginx/vhost.d
 mkdir -p nginx/conf.d
 mkdir -p nginx/html
 
+# If already running, stop/remove containers (keep volumes)
+docker-compose stop nginx-proxy letsencrypt-companion 2>/dev/null || true
+docker-compose rm -f nginx-proxy letsencrypt-companion 2>/dev/null || true
+
 # Start nginx-proxy and Let's Encrypt companion
 docker-compose up -d
 

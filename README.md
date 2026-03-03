@@ -35,7 +35,7 @@ For a detailed guide (examples, custom nginx config, WebSockets, troubleshooting
    make deploy
    ```
 
-Requires Docker on the server. First time on server: create `app_network` and nginx dirs (done by `setup-prod.sh`).
+Requires Docker on the server. First time on server: create `app_network` and nginx dirs (done by `setup-prod.sh`). Re-deploys will stop/remove the existing proxy containers and recreate them.
 
 ## Adding a new backend (from another repo)
 
