@@ -73,6 +73,12 @@ No restart of nginx-proxy needed when adding or removing backends.
 - Certificates: `docker exec nginx-proxy ls -la /etc/nginx/certs/`
 - Config: `docker exec nginx-proxy cat /etc/nginx/conf.d/default.conf`
 
+## Fix the 1 MB limit on HTTP (port 80)
+
+The port‑80 server block never includes vhost.d, so the only way to allow large uploads over HTTP is to set the limit **globally** in nginx-proxy. That applies to all sites behind the same proxy.
+
+This project already mounts `./nginx/conf.d` into the proxy and includes `nginx/conf.d/client_max_body_size.conf` set to **25 MB**. To change the limit, edit that file (e.g. `client_max_body_size 50m;` or `0` for no limit), then reload nginx-proxy (`docker exec nginx-proxy nginx -s reload` or restart the container).
+
 ## Optional: host-mounted Let's Encrypt
 
 Compose mounts `/etc/letsencrypt/live` and `/etc/letsencrypt/archive` read-only so certs obtained on the host (e.g. certbot) can be used. The companion normally writes into the `nginx_certs` volume; use one or the other.
